@@ -7,7 +7,7 @@ app.use(express.json());
 //cors settings
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://mern-gmc-app.onrender.com"]
   })
 );
 
