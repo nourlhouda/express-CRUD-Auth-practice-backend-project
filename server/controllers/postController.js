@@ -33,6 +33,11 @@ const readPost = async (req, res) => {
 //@access public
 const deletePost = async (req, res) => {
   try {
+    const post = await Post.findById(req.params.postId);
+    if (String(post.owner._id) != req.userId)
+      return res.staus((401).json({ msg: "you are not authorized" }));
+    await Post.findByIdAndDelete(req.params.postId);
+    res.json({ msg: "post deleted" });
   } catch (error) {
     res.status(500).json({ msg: `something went wrong ${error}` });
   }
@@ -40,12 +45,18 @@ const deletePost = async (req, res) => {
 
 //@desc update post
 //@route PUT /api/user/update
-//@access public
+//@access provate - owner
 const updatePost = async (req, res) => {
   try {
+    const post = await Post.findById(req.params.postId);
+    if (String(post.owner._id) !== req.userId)
+      return res.status(401).json({ msg: "you are not authorized" });
+    await Post.findByIdAndUpdate(req.params.postId, { ...req.body });
+    res.json({ msg: "post updated" });
   } catch (error) {
     res.status(500).json({ msg: `something went wrong ${error}` });
   }
 };
+
 
 module.exports = { createPost, readPost, deletePost, updatePost };
